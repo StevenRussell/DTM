@@ -16,7 +16,9 @@ p
 
 t <- prop.table(table(df$depart_admin2_nom, df$destination_admin2_name)[-1, -1], margin=1)
 e <- attributes(t)$dimnames[[2]]
-
+nt <- table(df$depart_admin2_nom, df$destination_admin2_name)[-1, -1]
+  
+  
 pdf <- NULL
 
 for (depart.point in 1:10){
@@ -25,16 +27,16 @@ for (depart.point in 1:10){
   
   
   #a <- attributes(t)$dimnames[[1]]
+  n <- nt[depart.point,]
   x <- names(vec)
   y <- as.numeric(vec)
   depart.point2 <- e[depart.point]
-  df2 <- data.frame(x, y, depart.point2)
+  df2 <- data.frame(x, y, n, depart.point2)
   pdf <- rbind(pdf,df2)
 }
 
-df2$entry.point <- 
 x.title <- list(
-  title = "x Axis"
+  title = ""
 )
 y.title <- list(
   title = "Proportion of migrants"
@@ -45,10 +47,11 @@ y.title <- list(
 
 #row.vars <- attributes(t)$dimnames[[2]]
 
-plt <- plot_ly(pdf, x = ~x, y = ~y, frame=~depart.point2, type = 'bar') %>%
+plt <- plot_ly(pdf, x = ~x, y = ~y, frame=~depart.point2, type = 'bar',
+               hoverinfo = 'text', text = ~paste(n))  %>%
   layout(xaxis = x.title, yaxis = y.title)
 
-htmlwidgets::saveWidget(as_widget(plt), "index.html")
+htmlwidgets::saveWidget(as_widget(plt), "Migration Widget.html")
 
 
 # https://stackoverflow.com/questions/34580095/using-r-and-plot-ly-how-do-i-script-saving-my-output-as-a-webpage
